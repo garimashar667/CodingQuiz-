@@ -5,7 +5,8 @@ def init_db():
     conn = sqlite3.connect('quiz.db')
     cursor = conn.cursor()
     
-    # Tables tabhi banengi agar pehle se nahi hain (Bina drop kiye data safe rahega)
+    cursor.execute('DROP TABLE IF EXISTS questions')
+    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,39 +28,38 @@ def init_db():
         )
     ''')
     
-    # Sirf SYSTEM questions ko safe reload karne ke liye check
     cursor.execute("SELECT COUNT(*) FROM questions WHERE room_code = 'SYSTEM'")
-    if cursor.fetchone()[0] == 0:
-        ultimate_unique_quiz = [
-            # 🐍 PYTHON TIER (5 Puzzles)
-            ("SYSTEM", "Python", "Easy", "# REVERSE TRACE CHALLENGE\n# Target Output is:\n# Which replacement for '??' works?", "print([x for x in range(5) if x % 2 == 0])", "print([x*2 for x in range(3)])", "print([x for x in range(6) if x % 2 == 0])", "print(list(range(0, 5, 2)))", "print([x*2 for x in range(3)])"),
-            ("SYSTEM", "Python", "Medium", "# BUG HUNTING ARENA\n# Why does this fail for strings?\ndef calc(x):\n    return x + 5.0", "Unsupported operand type", "IndentationError", "NameError", "Works perfectly", "Unsupported operand type"),
-            ("SYSTEM", "Python", "Medium", "# REVERSE TRACE CHALLENGE\n# Target Output is: True\n# Select the correct evaluation configuration:", "print(round(2.5) == round(3.5))", "print(0.1 + 0.2 == 0.3)", "print(bool([]))", "print('A' is 'A')", "print(round(2.5) == round(3.5))"),
-            ("SYSTEM", "Python", "Hard", "# BUG HUNTING ARENA\n# Identify the dynamic default mutable storage glitch context:", "def add(n, l=[]): l.append(n); return l", "x = 10; def f(): print(x); x = 5", "a = 256; b = 256; print(a is b)", "print(all([]))", "def add(n, l=[]): l.append(n); return l"),
-            ("SYSTEM", "Python", "Extreme", "# REVERSE TRACE CHALLENGE\n# Target Output is: True False\n# Which logic maps this vacuous truth behavior?", "print(all([]), any([]))", "print(any([]), all([]))", "print(10 > 5 > 2, bool(''))", "print(type(type) == object, False)", "print(all([]), any([]))"),
+    if cursor.fetchone() == 0:
+        python_exhaustive_quiz = [
+            # 🟢 EASY LEVEL (Questions 1 - 5)
+            ("SYSTEM", "Python", "Easy", "# PUZZLE 1: REVERSE TRACE CHALLENGE\n# Target Terminal Output is: [0, 2, 4]\n# Which option replacing '??' will generate this?", "print([x for x in range(5) if x % 2 == 0])", "print([x*2 for x in range(3)])", "print([x for x in range(6) if x % 2 == 0])", "print(list(range(0, 5, 2)))", "print([x*2 for x in range(3)])"),
+            ("SYSTEM", "Python", "Easy", "# PUZZLE 2: BUG HUNTING ARENA\n# Why does this operation fail for standard string concatenation?\nprint('Python' + 3.14)", "TypeError: can only concatenate str (not 'float') to str", "SyntaxError: invalid float literal token", "ValueError: structural type casting dynamic fault", "Works perfectly by automatically implicitly casting", "TypeError: can only concatenate str (not 'float') to str"),
+            ("SYSTEM", "Python", "Easy", "# PUZZLE 3: REVERSE TRACE CHALLENGE\n# Target Output is: nohtyP\n# Identify the missing slicing indices sequence mapping:", "text = 'Python'; print(text[::-1])", "text = 'Python'; print(text[-1:0])", "text = 'Python'; print(text[1:5:-1])", "text = 'Python'; print(text.reverse())", "text = 'Python'; print(text[::-1])"),
+            ("SYSTEM", "Python", "Easy", "# PUZZLE 4: DATA STRUCTURE TRICK\n# What is the unique collection length metric output?\nprint(len({1, 2, 2, 3, 3, 3}))", "6", "3", "4", "TypeError", "3"),
+            ("SYSTEM", "Python", "Easy", "# PUZZLE 5: STRING MUTATION OVERLOAD\n# Predict the compilation character trace behavior:\nprint(3 * 'A' + 'B')", "AAAB", "A3B", "SyntaxError", "AAA B", "AAAB"),
             
-            # 💛 JAVASCRIPT TIER (5 Puzzles)
-            ("SYSTEM", "JavaScript", "Easy", "// REVERSE TRACE CHALLENGE\n// Target Console Output is: 'number'\n// Which code snippet returns this state type?", "console.log(typeof NaN);", "console.log(typeof null);", "console.log(typeof undefined);", "console.log(typeof []);", "console.log(typeof NaN);"),
-            ("SYSTEM", "JavaScript", "Medium", "// BUG HUNTING ARENA\n// What will be the final mutated output of this logical paradox?\nconsole.log(true + false + '1');", "'11'", "'101'", "'2'", "NaN", "'11'"),
-            ("SYSTEM", "JavaScript", "Medium", "// REVERSE TRACE CHALLENGE\n// Target Output is: true\n// Select the dynamic loose type equivalence:", "console.log([] == ![]);", "console.log(0.1 + 0.2 === 0.3);", "console.log(null === undefined);", "console.log(NaN === NaN);", "console.log([] == ![]);"),
-            ("SYSTEM", "JavaScript", "Hard", "// BUG HUNTING ARENA\n// Why does strict equality return false here?\nconsole.log(0.1 + 0.2 === 0.3);", "Binary Floating-Point IEEE 754 precision anomaly", "V8 Engine parsing constraint", "Scope hoisting restriction", "Garbage collection leak", "Binary Floating-Point IEEE 754 precision anomaly"),
-            ("SYSTEM", "JavaScript", "Extreme", "// REVERSE TRACE CHALLENGE\n// Target Output is: undefined\n// Which expression references this implicit block state?", "let a; console.log(a);", "console.log(typeof null);", "console.log(NaN);", "console.log(this);", "let a; console.log(a);"),
+            # 🟡 MEDIUM LEVEL (Questions 6 - 10)
+            ("SYSTEM", "Python", "Medium", "# PUZZLE 6: BUG HUNTING ARENA\n# Why does this fail for string evaluation runtime?\ndef calc(x): return x + 5.0", "Unsupported operand type dynamic validation anomaly", "IndentationError caught on execution line 2", "NameError lookup variable crash", "Works flawlessly via polymorphic parsing parameters", "Unsupported operand type dynamic validation anomaly"),
+            ("SYSTEM", "Python", "Medium", "# PUZZLE 7: REVERSE TRACE CHALLENGE\n# Target Output is: True\n# Which logic maps Banker's Rounding protocols tracking parity?", "print(round(2.5) == round(3.5))", "print(0.1 + 0.2 == 0.3)", "print(bool([]))", "print('A' is 'A')", "print(round(2.5) == round(3.5))"),
+            ("SYSTEM", "Python", "Medium", "# PUZZLE 8: DICTIONARY FALLBACK TRACE\n# Predict the runtime output matrix of target missing key parameters:\nd = {'a': 1, 'b': 2}; print(d.get('c', 404))", "None", "KeyError exception trace", "404", "0", "404"),
+            ("SYSTEM", "Python", "Medium", "# PUZZLE 9: BOOLEAN FALSY PARADOX\n# What sequence token string is output by empty state checks?\nprint(bool([]), bool(), bool(''))", "False True False", "False False False", "True True True", "TypeError structural warning", "False False False"),
+            ("SYSTEM", "Python", "Medium", "# PUZZLE 10: LIST MUTATION PARADOX\n# Predict the structural update trace value of array items:\nx = []; y = x; y.append(5); print(x)", "[]", "[5]", "None", "AttributeError tracking elements", "[5]"),
             
-            # 💙 C++ TIER (5 Puzzles)
-            ("SYSTEM", "C++", "Easy", "// REVERSE TRACE CHALLENGE\n// Target Output is: 2\n// Select the operation that rounds down integer division:", "int a = 5, b = 2; cout << a / b;", "float a = 5, b = 2; cout << a / b;", "cout << 5 % 2;", "cout << (5 >> 1);", "int a = 5, b = 2; cout << a / b;"),
-            ("SYSTEM", "C++", "Medium", "// COMPILER BINDING TRAP\n// What is the behavior of executing nested mutations on standard streams?\ncout << ++x << ' ' << x++;", "Expression sequence evaluation is Compiler Dependent", "Undefined token memory loop", "Immediate Segmentation Fault", "Syntax structural crash", "Expression sequence evaluation is Compiler Dependent"),
-            ("SYSTEM", "C++", "Medium", "// REVERSE TRACE CHALLENGE\n// Target Output is: 1\n// Which condition evaluates logical truth representation?", "cout << (10 > 5 && 3 < 4);", "cout << (5 & 2);", "cout << (sizeof(char) == 4);", "cout << (NULL == 1);", "cout << (10 > 5 && 3 < 4);"),
-            ("SYSTEM", "C++", "Hard", "// BUG HUNTING / MEMORY PROFILE\n// Why does 'int* ptr = new int; delete ptr;' trigger a leak allocation?", "Missing bracket structure: delete[] ptr;", "Dangling reference assignment mapping", "Stack frame overflow parameters", "Invalid pointer type declaration syntax", "Missing bracket structure: delete[] ptr;"),
-            ("SYSTEM", "C++", "Extreme", "// REVERSE TRACE CHALLENGE\n// Target Output is: 4 (on 32-bit architecture systems)\n// Identify the sizing metric trace:", "cout << sizeof(int*);", "cout << sizeof(double);", "cout << sizeof(std::string);", "cout << sizeof(long long);", "cout << sizeof(int*);"),
+            # 🟠 HARD LEVEL (Questions 11 - 15)
+            ("SYSTEM", "Python", "Hard", "# PUZZLE 11: BUG HUNTING ARENA\n# Identify the dynamic default mutable reference leak context loop:", "def add(n, l=[]): l.append(n); return l", "x = 10; def f(): print(x); x = 5", "a = 256; b = 256; print(a is b)", "print(all([]))", "def add(n, l=[]): l.append(n); return l"),
+            ("SYSTEM", "Python", "Hard", "# PUZZLE 12: FLOATING POINT IEEE 754 REFERENCE ANOMALY\n# What boolean logic matches precision computation offsets?\nprint(0.1 + 0.2 == 0.3)", "True", "False", "Machine Dependent architecture allocation", "ValueError validation loop", "False"),
+            ("SYSTEM", "Python", "Hard", "# PUZZLE 13: VARIABLE SCOPE RESOLUTION SURVEILLANCE\n# What error runtime flag is triggered by local lookup shadowing?", "x = 5\ndef run():\n    print(x)\n    x = 10\nrun()", "NameError runtime trace", "UnboundLocalError reference context conflict", "TypeError mismatch bounds", "Runs perfectly outputting 5", "UnboundLocalError reference context conflict"),
+            ("SYSTEM", "Python", "Hard", "# PUZZLE 14: INTERNALS MEMORY CACHING PIPELINE\n# Identify the behavior tracking integers bounds outside the integer cache pool:", "a = 257; b = 257; print(a is b)", "True", "False", "None structural context", "SegmentationFault dynamic core", "False"),
+            ("SYSTEM", "Python", "Hard", "# PUZZLE 15: TRICKY MUTABILITY REFERENCE MATRIX\n# Why can elements inside a tuple update successfully under these parameters?\nt = (1, 2, [])\nt[2].append(99)\nprint(t)", "Tuple remains immutable; inner list is mutable reference", "TypeError: item assignment bounds tracking crash", "SyntaxError checking tokens layout", "ValueError parameter conversion glitch", "Tuple remains immutable; inner list is mutable reference"),
             
-            # ☕ JAVA TIER (5 Puzzles)
-            ("SYSTEM", "Java", "Easy", "// REVERSE TRACE CHALLENGE\n// Target Output is: 30Java\n// Select code snippet generating correct precedence concatenation:", "System.out.println(10 + 20 + \"Java\");", "System.out.println(\"Java\" + 10 + 20);", "System.out.println(\"Java\" + (10 + 20));", "System.out.println(10 + \"Java\" + 20);", "System.out.println(10 + 20 + \"Java\");"),
-            ("SYSTEM", "Java", "Medium", "// STRING POOL MEMORY MATRIX\n// What is the comparison outcome value of distinct allocation spaces?\nString s1 = \"Hi\"; String s2 = new String(\"Hi\"); System.out.println(s1 == s2);", "false", "true", "NullPointerException", "Compilation Error", "false"),
-            ("SYSTEM", "Java", "Medium", "// REVERSE TRACE CHALLENGE\n// Target Output is: true\n// Select reference matching utilizing value comparison protocols:", "System.out.println(s1.equals(s2));", "System.out.println(s1 == s2);", "System.out.println(s1.identityHashCode());", "System.out.println(s1.compareTo(s2) != 0);", "System.out.println(s1.equals(s2));"),
-            ("SYSTEM", "Java", "Hard", "// BUG HUNTING ARENA\n// What exception is thrown by trying to modify an unmodifiable list mapping?", "UnsupportedOperationException", "NullPointerException", "IndexOutOfBoundsException", "ClassCastException", "UnsupportedOperationException"),
-            ("SYSTEM", "Java", "Extreme", "// REVERSE TRACE CHALLENGE\n// Target Output is: 0\n// Which default primitive initialization state maps this metric vector?", "int[] arr = new int; System.out.println(arr);", "Integer x = null; System.out.println(x);", "char c; System.out.println(c);", "System.out.println(System.identityHashCode(null));", "int[] arr = new int; System.out.println(arr);")
+            # 🔴 EXTREME LEVEL (Questions 16 - 20)
+            ("SYSTEM", "Python", "Extreme", "# PUZZLE 16: REVERSE TRACE CHALLENGE\n# Target Output is: True False\n# Which dynamic engine query maps this logical empty iterator paradox?", "print(all([]), any([]))", "print(any([]), all([]))", "print(10 > 5 > 2, bool(''))", "print(type(type) == object, False)", "print(all([]), any([]))"),
+            ("SYSTEM", "Python", "Extreme", "# PUZZLE 17: META-OBJECT META-CLASS RESOLUTION\n# Predict the precise execution object class map value:\nprint(type(type))", "<class 'object'>", "<class 'type'>", "<class 'class'>", "TypeError parameter mismatch", "<class 'type'>"),
+            ("SYSTEM", "Python", "Extreme", "# PUZZLE 18: OPERATOR PRECEDENCE REVERSE LOGIC\n# What token output string is evaluated by the structural execution tree?\nx = True; y = False; z = False\nif x or y and z: print('Win')\nelse: print('Lose')", "Win", "Lose", "SyntaxError matching tags", "None terminal feedback loop", "Win"),
+            ("SYSTEM", "Python", "Extreme", "# PUZZLE 19: CLOSURE SCOPE LEAK BINDINGS\n# Predict the final array token value evaluated under dynamic runtime:\nfuncs = [lambda x: i * x for i in range(3)]\nprint(funcs[0](2))", "0", "2", "4", "TypeError evaluation crash", "4"),
+            ("SYSTEM", "Python", "Extreme", "# PUZZLE 20: DYNAMIC POINTER IDENTICAL REFERENCING\n# What boolean response maps internal optimization bounds check validation?\na = -5; b = -5; print(a is b)", "True", "False", "SyntaxError compilation flag", "Machine dependent execution output", "True")
         ]
-        cursor.executemany("INSERT INTO questions (room_code, language, level, code, op1, op2, op3, op4, correct) VALUES (?,?,?,?,?,?,?,?,?)", ultimate_unique_quiz)
+        cursor.executemany("INSERT INTO questions (room_code, language, level, code, op1, op2, op3, op4, correct) VALUES (?,?,?,?,?,?,?,?,?)", python_exhaustive_quiz)
         
     conn.commit()
     conn.close()
@@ -87,8 +87,8 @@ def get_room_questions(room_code, selected_lang):
     questions = []
     for r in rows:
         questions.append({
-            "level": r[0], "code": r[1],
-            "options": [r[2], r[3], r[4], r[5]], "correct": r[6]
+            "level": r, "code": r,
+            "options": [r, r, r, r], "correct": r
         })
     return questions
 
