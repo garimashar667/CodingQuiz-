@@ -5,6 +5,7 @@ import logic
 import ui_components
 import os
 
+# Har reload par database initialization check lagaya taaki cloud data drop na ho
 db.init_db()
 st.set_page_config(page_title="CodeQuest Multi-Arena", page_icon="💻", layout="centered")
 ui_components.draw_header()
@@ -94,6 +95,8 @@ elif st.session_state.step == "join_screen":
     
     if st.button("🚀 Break Into Arena", use_container_width=True):
         if room_input and player_name:
+            # Force auto-trigger init logic again on live connection matrix to guarantee records loading
+            db.init_db()
             st.session_state.player_identity = player_name
             st.session_state.display_name = f"{avatar_emoji} {player_name}"
             st.session_state.room_code = room_input
@@ -205,7 +208,6 @@ elif st.session_state.step == "quiz":
                 lang_key = "python" if st.session_state.selected_lang == "Python" else "javascript" if st.session_state.selected_lang == "JavaScript" else "cpp" if st.session_state.selected_lang == "C++" else "java"
                 code_place.code(display_code, language=lang_key)
                 time_saved = getattr(st.session_state, 'last_timer_value', 1)
-                
                 if user_choice == q["correct"]:
                     pts = logic.calculate_points(time_saved, difficulty=q["level"])
                     if st.session_state.mutated:
@@ -224,28 +226,28 @@ elif st.session_state.step == "quiz":
             st.session_state.step = "leaderboard"
             st.rerun()
 elif st.session_state.step == "leaderboard":
-    st.markdown("🏆 THE OVERLORD LEADERBOARD 🏆", unsafe_allow_html=True)
-    scores_data = db.get_leaderboard(st.session_state.room_code)
-    player_rank = None
-    for idx, (p_name, score) in enumerate(scores_data, start=1):
-        if p_name == st.session_state.player_identity:
-            player_rank = idx
-            break
-    for rank, (name, score) in enumerate(scores_data, start=1):
-       if rank == 1:
-           st.markdown(f"🥇 RANK {rank}: {name} — {score} Pts [ARENA OVERLORD]", unsafe_allow_html=True)
-       else:
-           medal = "🥈" if rank == 2 else "🥉" if rank == 3 else "👾"
-           st.markdown(f"### {medal} Rank {rank}: {name} — {score} Pts")
-    st.divider()
-    st.subheader("📜 Cryptographic Verification Terminal")
-    if player_rank and player_rank <= 3:
+     st.markdown("🏆 THE OVERLORD LEADERBOARD 🏆", unsafe_allow_html=True)
+     scores_data = db.get_leaderboard(st.session_state.room_code)
+     player_rank = None
+     for idx, (p_name, score) in enumerate(scores_data, start=1):
+         if p_name == st.session_state.player_identity:
+             player_rank = idx
+             break
+     for rank, (name, score) in enumerate(scores_data, start=1):
+         if rank == 1:
+            st.markdown(f"🥇 RANK {rank}: {name} — {score} Pts [ARENA OVERLORD]", unsafe_allow_html=True)
+         else:
+            medal = "🥈" if rank == 2 else "🥉" if rank == 3 else "👾"
+     st.markdown(f"### {medal} Rank {rank}: {name} — {score} Pts")
+     st.divider()
+     st.subheader("📜 Cryptographic Verification Terminal")
+     if player_rank and player_rank <= 3:
         st.success(f"👑 Divine Matrix Clear! Rank {player_rank} Secured!")
         cert_file = logic.create_certificate(st.session_state.player_identity, rank=player_rank)
-    else:
+     else:
         st.info("👍 Stage clear. Fetching certificate...")
         cert_file = logic.create_certificate(st.session_state.player_identity, rank=None)
-    with open(cert_file, "rb") as file:
+     with open(cert_file, "rb") as file:
         st.download_button(
             label="📥 Export Digital Signature Certificate (PNG)",
             data=file,
@@ -253,10 +255,10 @@ elif st.session_state.step == "leaderboard":
             mime="image/png",
             use_container_width=True
         )
-    if st.button("🔄 Recycle Core Hub System", use_container_width=True):
-        st.session_state.step = "home"
-        st.session_state.score = 0
-        st.session_state.current_q = 0
-        st.session_state.reactions = []
-        st.query_params.clear()
-        st.rerun()
+     if st.button("🔄 Recycle Core Hub System", use_container_width=True):
+         st.session_state.step = "home"
+         st.session_state.score = 0
+         st.session_state.current_q = 0
+         st.session_state.reactions = []
+         st.query_params.clear()
+         st.rerun()
